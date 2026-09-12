@@ -12,10 +12,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ordresot.cbeditor.presentation.core.ui.CustomFileDialog
@@ -31,31 +27,12 @@ fun Content(
     uiState: MergerUiState.Content,
     onAction: (MergerAction) -> Unit,
 ) {
-    var showFileDialog by remember { mutableStateOf(false) }
-
-    // Обработчик открытия диалога
-    val onPickFiles = {
-        showFileDialog = true
-    }
-
-    // Обработчик выбора файлов из диалога
-    val onFilesSelectedFromDialog = { files: List<java.io.File> ->
-        onAction(MergerAction.OnFilesSelected(files.map { it.absolutePath }))
-        showFileDialog = false
-    }
-
-    // Обработчик отмены диалога
-    val onDialogDismiss = {
-        showFileDialog = false
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp)
             .padding(bottom = 24.dp)
     ) {
-        // Описание
         Text(
             text = "Выберите CBR/CBZ файлы для объединения. Файлы будут объединены в порядке их выбора.",
             style = MaterialTheme.typography.headlineMedium,
@@ -63,24 +40,18 @@ fun Content(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Сообщения об ошибках/успехе
-        uiState.successMessage?.let { message ->
-            SuccessMessage(
-                message = message,
-                onDismiss = { onAction(MergerAction.OnDismissSuccess) },
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        }
+        SuccessMessage(
+            message = uiState.successMessage,
+            onDismiss = { onAction(MergerAction.OnDismissSuccess) },
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-        uiState.errorMessage?.let { message ->
-            ErrorMessage(
-                message = message,
-                onDismiss = { onAction(MergerAction.OnDismissError) },
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        }
+        ErrorMessage(
+            message = uiState.errorMessage,
+            onDismiss = { onAction(MergerAction.OnDismissError) },
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-        // Прогресс объединения
         if (uiState.currentOperation.isNotEmpty()) {
             MergeProgress(
                 progress = uiState.progress,
@@ -97,7 +68,7 @@ fun Content(
             onFilesSelected = { files ->
                 onAction(MergerAction.OnFilesSelected(files))
             },
-            onPickFiles = onPickFiles,
+            onPickFiles = { onAction(MergerAction.OnShowFileDialog) },
             isLoading = uiState.isLoading,
             modifier = Modifier
                 .weight(1f)
@@ -144,10 +115,13 @@ fun Content(
         }
     }
 
-    if (showFileDialog) {
+    if (uiState.isShowFileDialog) {
         CustomFileDialog(
-            onFilesSelected = onFilesSelectedFromDialog,
-            onDismiss = onDialogDismiss
+            onFilesSelected = { files ->
+                onAction(MergerAction.OnFilesSelected(files.map { it.absolutePath }))
+                onAction(MergerAction.OnDismissFileDialog)
+            },
+            onDismiss = { onAction(MergerAction.OnDismissFileDialog) }
         )
     }
 }

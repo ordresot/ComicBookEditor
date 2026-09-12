@@ -1,6 +1,8 @@
 package com.ordresot.cbeditor.data.repository
 
+import com.ordresot.cbeditor.domain.repository.ArchiveRepository
 import com.ordresot.cbeditor.domain.repository.FileRepository
+import com.ordresot.cbeditor.domain.repository.PreferencesRepository
 import com.ordresot.cbeditor.models.ArchiveEntry
 import com.ordresot.cbeditor.utils.MergeProgressTracker
 import kotlinx.coroutines.Dispatchers
@@ -10,8 +12,8 @@ import org.koin.core.component.inject
 import java.io.File
 
 actual class FileRepositoryImpl actual constructor() : FileRepository, KoinComponent {
-    private val archiveService: ArchiveRepositoryImpl by inject()
-    private val preferencesManager: PreferencesRepositoryImpl by inject()
+    private val archiveService: ArchiveRepository by inject()
+    private val preferencesManager: PreferencesRepository by inject()
 
     actual override suspend fun mergeFiles(
         sourcePaths: List<String>,

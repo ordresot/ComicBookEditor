@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.ordresot.cbeditor.presentation.core.navigation.NavigationEffect
 import com.ordresot.cbeditor.presentation.core.base.BaseViewModel
 import com.ordresot.cbeditor.domain.repository.FileRepository
-import com.ordresot.cbeditor.presentation.merger.widget.MergerConverter
+import com.ordresot.cbeditor.presentation.merger.MergerConverter
 import com.ordresot.cbeditor.utils.MergeProgressTracker
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -37,6 +37,12 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
             }
             is MergerAction.OnDismissSuccess -> {
                 updateState { stateDismissSuccess() }
+            }
+            is MergerAction.OnShowFileDialog -> {
+                updateState { stateShowFileDialog() }
+            }
+            is MergerAction.OnDismissFileDialog -> {
+                updateState { stateDismissFileDialog() }
             }
             is MergerAction.OnProgressUpdate -> {
                 updateState { stateProgressUpdate(action.progress, action.operation) }

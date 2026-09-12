@@ -7,7 +7,8 @@ data class MergerState(
     val successMessage: String = "",
     val outputFileName: String = "",
     val progress: Float = 0f,
-    val currentOperation: String = ""
+    val currentOperation: String = "",
+    val isShowFileDialog: Boolean = false
 ) {
 
     fun stateSelectedFiles(files: List<String>): MergerState = copy(selectedFiles = files)
@@ -34,4 +35,8 @@ data class MergerState(
 
     fun stateMergeError(message: String): MergerState =
         copy(isLoading = false, errorMessage = message)
+
+    fun stateShowFileDialog(): MergerState = copy(isShowFileDialog = true)
+
+    fun stateDismissFileDialog(): MergerState = copy(isShowFileDialog = false)
 }

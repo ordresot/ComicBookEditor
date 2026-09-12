@@ -12,6 +12,7 @@ class MergerConverter : StateConverter<MergerState, MergerUiState> {
             outputFileName = state.outputFileName,
             progress = state.progress,
             currentOperation = state.currentOperation,
+            isShowFileDialog = state.isShowFileDialog,
         )
     }
 }

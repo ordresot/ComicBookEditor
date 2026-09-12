@@ -9,5 +9,6 @@ sealed interface MergerUiState {
         val outputFileName: String,
         val progress: Float,
         val currentOperation: String,
+        val isShowFileDialog: Boolean,
     ) : MergerUiState
 }
