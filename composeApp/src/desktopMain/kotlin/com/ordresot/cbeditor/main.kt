@@ -6,9 +6,11 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import com.ordresot.cbeditor.presentation.ui.ComicEditorApp
+import com.ordresot.cbeditor.presentation.ComicEditorApp
 
 fun main() = application {
+    initKoin()
+
     Window(
         onCloseRequest = ::exitApplication,
         title = "Comic Book Editor",

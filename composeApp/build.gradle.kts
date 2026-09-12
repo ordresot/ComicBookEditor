@@ -30,6 +30,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.appcompat)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -43,6 +44,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
             implementation(compose.materialIconsExtended)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -51,6 +54,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation("org.apache.commons:commons-compress:1.28.0")
+            implementation(libs.compose.ui.util)
         }
     }
 }
@@ -91,6 +95,10 @@ android {
 dependencies {
     debugImplementation(compose.uiTooling)
 }
+
+// Exclude Android ui-util from desktop to avoid stub implementation conflicts
+val desktopRuntimeClasspath by configurations.existing
+desktopRuntimeClasspath.get().exclude(group = "androidx.compose.ui", module = "ui-util")
 
 compose.desktop {
     application {

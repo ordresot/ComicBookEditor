@@ -1,0 +1,22 @@
+package com.ordresot.cbeditor.core.di
+
+import com.ordresot.cbeditor.data.repository.ArchiveRepositoryImpl
+import com.ordresot.cbeditor.data.repository.FileRepositoryImpl
+import com.ordresot.cbeditor.data.repository.PreferencesRepositoryImpl
+import com.ordresot.cbeditor.presentation.merger.MergerViewModel
+import org.koin.dsl.module
+
+val repositoryModule = module {
+    single { ArchiveRepositoryImpl() }
+    single { FileRepositoryImpl() }
+    single { PreferencesRepositoryImpl() }
+}
+
+val viewModelModule = module {
+    factory { MergerViewModel() }
+}
+
+val appModule = listOf(
+    repositoryModule,
+    viewModelModule
+)
