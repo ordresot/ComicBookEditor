@@ -20,26 +20,26 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
     override fun onAction(action: MergerAction) {
         when (action) {
             is MergerAction.OnFilesSelected -> {
-                updateState { copy(selectedFiles = action.files) }
+                updateState { stateSelectedFiles(action.files) }
                 if (action.files.isNotEmpty()) {
                     val firstFileName = File(action.files.first()).nameWithoutExtension
-                    updateState { copy(outputFileName = firstFileName) }
+                    updateState { stateOutputFileName(firstFileName) }
                 } else {
-                    updateState { copy(outputFileName = "") }
+                    updateState { stateOutputFileName("") }
                 }
             }
             is MergerAction.OnOutputFileNameChanged -> {
-                updateState { copy(outputFileName = action.fileName) }
+                updateState { stateOutputFileName(action.fileName) }
             }
             is MergerAction.OnMergeFiles -> mergeFiles()
             is MergerAction.OnDismissError -> {
-                updateState { copy(errorMessage = "") }
+                updateState { stateDismissError() }
             }
             is MergerAction.OnDismissSuccess -> {
-                updateState { copy(successMessage = "") }
+                updateState { stateDismissSuccess() }
             }
             is MergerAction.OnProgressUpdate -> {
-                updateState { copy(progress = action.progress, currentOperation = action.operation) }
+                updateState { stateProgressUpdate(action.progress, action.operation) }
             }
         }
     }
@@ -49,7 +49,7 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
         if (state.selectedFiles.size < 2) return
 
         viewModelScope.launch {
-            updateState { copy(isLoading = true, errorMessage = "", successMessage = "") }
+            updateState { stateMergingStarted() }
 
             try {
                 val progressTracker = MergeProgressTracker()
@@ -62,29 +62,12 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
                 )
 
                 if (success) {
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            successMessage = "Файлы успешно объединены в: ${File(outputPath).name}",
-                            selectedFiles = emptyList(),
-                            outputFileName = ""
-                        )
-                    }
+                    updateState { stateMergeSuccess(outputPath) }
                 } else {
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            errorMessage = "Ошибка при объединении файлов"
-                        )
-                    }
+                    updateState { stateMergeError("Ошибка при объединении файлов") }
                 }
             } catch (e: Exception) {
-                updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = "Ошибка: ${e.message}"
-                    )
-                }
+                updateState { stateMergeError("Ошибка: ${e.message}") }
             }
         }
     }
