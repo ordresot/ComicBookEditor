@@ -6,6 +6,7 @@ import com.ordresot.cbeditor.presentation.core.base.BaseViewModel
 import com.ordresot.cbeditor.domain.repository.FileRepository
 import com.ordresot.cbeditor.domain.repository.PreferencesRepository
 import com.ordresot.cbeditor.presentation.utils.MergeProgressTracker
+import com.ordresot.cbeditor.core.utils.generateOutputPath
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -21,69 +22,101 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
 
     override fun onAction(action: MergerAction) {
         when (action) {
-            is MergerAction.OnFilesSelected -> {
-                updateState { stateSelectedFiles(action.files) }
-                if (action.files.isNotEmpty()) {
-                    val firstFileName = File(action.files.first()).nameWithoutExtension
-                    updateState { stateOutputFileName(firstFileName) }
-                } else {
-                    updateState { stateOutputFileName("") }
-                }
-            }
-            is MergerAction.OnOutputFileNameChanged -> {
-                updateState { stateOutputFileName(action.fileName) }
-            }
-            is MergerAction.OnMergeFiles -> mergeFiles()
-            is MergerAction.OnDismissError -> {
-                updateState { stateDismissMessage() }
-            }
-            is MergerAction.OnDismissSuccess -> {
-                updateState { stateDismissMessage() }
-            }
-            is MergerAction.OnShowFileDialog -> {
-                val lastDir = preferencesRepository.getLastDirectory()
-                val startDir = lastDir?.absolutePath ?: File(System.getProperty("user.home")).absolutePath
-                updateState { stateShowFileDialog().stateNavigateToDirectory(startDir) }
-            }
-            is MergerAction.OnDismissFileDialog -> {
-                updateState { stateDismissFileDialog() }
-            }
-            is MergerAction.OnNavigateUp -> {
-                updateState { stateNavigateUp() }
-            }
-            is MergerAction.OnNavigateToDirectory -> {
-                updateState { stateNavigateToDirectory(action.path) }
-                preferencesRepository.saveLastDirectory(File(action.path))
-            }
-            is MergerAction.OnNavigateToCustomPath -> {
-                val dir = File(action.path)
-                if (dir.exists() && dir.isDirectory) {
-                    updateState { stateNavigateToCustomPath(action.path) }
-                    preferencesRepository.saveLastDirectory(dir)
-                }
-            }
-            is MergerAction.OnToggleFileSelection -> {
-                updateState { stateToggleFileSelection(action.path) }
-            }
-            is MergerAction.OnConfirmFileDialog -> {
-                if (state.selectedFiles.isNotEmpty()) {
-                    val dir = File(state.dialogCurrentDirectory)
-                    preferencesRepository.saveLastDirectory(dir)
-                    updateState {
-                        stateConfirmFileDialog()
-                    }
-                }
-            }
-            is MergerAction.OnUpdateDialogPathText -> {
-                updateState { stateUpdateDialogPathText(action.path) }
-            }
-            is MergerAction.OnProgressUpdate -> {
-                updateState { stateProgressUpdate(action.progress, action.operation) }
+            is MergerAction.OnFilesSelected -> onFilesSelected(action.files)
+            is MergerAction.OnOutputFileNameChanged -> onOutputFileNameChanged(action.fileName)
+            is MergerAction.OnMergeFiles -> onMergeFiles()
+            is MergerAction.OnDismissError -> onDismissError()
+            is MergerAction.OnDismissSuccess -> onDismissSuccess()
+            is MergerAction.OnShowFileDialog -> onShowFileDialog()
+            is MergerAction.OnDismissFileDialog -> onDismissFileDialog()
+            is MergerAction.OnNavigateUp -> onNavigateUp()
+            is MergerAction.OnNavigateToDirectory -> onNavigateToDirectory(action.path)
+            is MergerAction.OnNavigateToCustomPath -> onNavigateToCustomPath(action.path)
+            is MergerAction.OnToggleFileSelection -> onToggleFileSelection(action.path)
+            is MergerAction.OnConfirmFileDialog -> onConfirmFileDialog()
+            is MergerAction.OnUpdateDialogPathText -> onUpdateDialogPathText(action.path)
+            is MergerAction.OnProgressUpdate -> onProgressUpdate(action.progress, action.operation)
+        }
+    }
+
+    private fun onFilesSelected(files: List<String>) {
+        updateState { stateSelectedFiles(files) }
+        if (files.isNotEmpty()) {
+            val firstFileName = File(files.first()).nameWithoutExtension
+            updateState { stateOutputFileName(firstFileName) }
+        } else {
+            updateState { stateOutputFileName("") }
+        }
+    }
+
+    private fun onOutputFileNameChanged(fileName: String) {
+        updateState { stateOutputFileName(fileName) }
+    }
+
+    private fun onDismissError() {
+        updateState { stateDismissMessage() }
+    }
+
+    private fun onDismissSuccess() {
+        updateState { stateDismissMessage() }
+    }
+
+    private fun onShowFileDialog() {
+        viewModelScope.launch {
+            val lastDir = preferencesRepository.getLastDirectory()
+            val startDir = lastDir?.absolutePath ?: File(System.getProperty("user.home")).absolutePath
+            updateState { stateShowFileDialog().stateNavigateToDirectory(startDir) }
+        }
+    }
+
+    private fun onDismissFileDialog() {
+        updateState { stateDismissFileDialog() }
+    }
+
+    private fun onNavigateUp() {
+        updateState { stateNavigateUp() }
+    }
+
+    private fun onNavigateToDirectory(path: String) {
+        updateState { stateNavigateToDirectory(path) }
+        viewModelScope.launch {
+            preferencesRepository.saveLastDirectory(File(path))
+        }
+    }
+
+    private fun onNavigateToCustomPath(path: String) {
+        val dir = File(path)
+        if (dir.exists() && dir.isDirectory) {
+            updateState { stateNavigateToCustomPath(path) }
+            viewModelScope.launch {
+                preferencesRepository.saveLastDirectory(dir)
             }
         }
     }
 
-    private fun mergeFiles() {
+    private fun onToggleFileSelection(path: String) {
+        updateState { stateToggleFileSelection(path) }
+    }
+
+    private fun onConfirmFileDialog() {
+        if (state.selectedFiles.isNotEmpty()) {
+            val dir = File(state.dialogCurrentDirectory)
+            viewModelScope.launch {
+                preferencesRepository.saveLastDirectory(dir)
+            }
+            updateState { stateConfirmFileDialog() }
+        }
+    }
+
+    private fun onUpdateDialogPathText(path: String) {
+        updateState { stateUpdateDialogPathText(path) }
+    }
+
+    private fun onProgressUpdate(progress: Float, operation: String) {
+        updateState { stateProgressUpdate(progress, operation) }
+    }
+
+    private fun onMergeFiles() {
         val state = state
         if (state.selectedFiles.size < 2) return
 
@@ -121,12 +154,5 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
                 updateState { stateMergeError("Ошибка: ${e.message}") }
             }
         }
-    }
-
-    private fun generateOutputPath(sourcePaths: List<String>, customFileName: String): String {
-        val firstFile = File(sourcePaths.first())
-        val parentDir = firstFile.parent ?: System.getProperty("user.home")
-        val fileName = customFileName.ifEmpty { firstFile.nameWithoutExtension }
-        return "$parentDir/${fileName}.cbz"
     }
 }
