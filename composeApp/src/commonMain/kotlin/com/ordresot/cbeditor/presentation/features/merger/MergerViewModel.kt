@@ -35,10 +35,10 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
             }
             is MergerAction.OnMergeFiles -> mergeFiles()
             is MergerAction.OnDismissError -> {
-                updateState { stateDismissError() }
+                updateState { stateDismissMessage() }
             }
             is MergerAction.OnDismissSuccess -> {
-                updateState { stateDismissSuccess() }
+                updateState { stateDismissMessage() }
             }
             is MergerAction.OnShowFileDialog -> {
                 val lastDir = preferencesRepository.getLastDirectory()

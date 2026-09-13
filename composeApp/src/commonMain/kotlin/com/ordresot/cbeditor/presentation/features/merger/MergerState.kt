@@ -1,46 +1,45 @@
 package com.ordresot.cbeditor.presentation.features.merger
 
+import com.ordresot.cbeditor.presentation.features.merger.uiState.MessageUi
+import com.ordresot.cbeditor.presentation.features.merger.uiState.ProgressUi
 import java.io.File
 
 data class MergerState(
     val selectedFiles: List<String> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String = "",
-    val successMessage: String = "",
+    val message: MessageUi? = null,
     val outputFileName: String = "",
-    val progress: Float = 0f,
-    val currentOperation: String = "",
+    val progress: ProgressUi? = null,
     val isShowFileDialog: Boolean = false,
     val dialogCurrentDirectory: String = "",
     val dialogPathText: String = ""
 ) {
-
     fun stateSelectedFiles(files: List<String>): MergerState = copy(selectedFiles = files)
 
     fun stateOutputFileName(fileName: String): MergerState = copy(outputFileName = fileName)
 
-    fun stateDismissError(): MergerState = copy(errorMessage = "")
+    fun stateShowMessage(text: String, type: MessageUi.MessageType): MergerState =
+        copy(message = MessageUi(text, type))
 
-    fun stateDismissSuccess(): MergerState = copy(successMessage = "")
+    fun stateDismissMessage(): MergerState = copy(message = null)
 
     fun stateProgressUpdate(progress: Float, operation: String): MergerState =
-        copy(progress = progress, currentOperation = operation)
+        copy(progress = ProgressUi(progress, operation))
 
     fun stateMergingStarted(): MergerState =
-        copy(isLoading = true, errorMessage = "", successMessage = "")
+        copy(isLoading = true, message = null)
 
     fun stateMergeSuccess(outputPath: String): MergerState =
         copy(
             isLoading = false,
-            successMessage = "Файлы успешно объединены в: ${File(outputPath).name}",
+            message = MessageUi("Файлы успешно объединены в: ${File(outputPath).name}", MessageUi.MessageType.Success),
             selectedFiles = emptyList(),
             outputFileName = "",
-            progress = 0f,
-            currentOperation = ""
+            progress = null
         )
 
     fun stateMergeError(message: String): MergerState =
-        copy(isLoading = false, errorMessage = message)
+        copy(isLoading = false, message = MessageUi(message, MessageUi.MessageType.Error))
 
     fun stateShowFileDialog(): MergerState = copy(isShowFileDialog = true)
 

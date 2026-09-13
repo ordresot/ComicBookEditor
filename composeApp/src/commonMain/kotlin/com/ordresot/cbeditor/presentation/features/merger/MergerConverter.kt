@@ -7,11 +7,9 @@ class MergerConverter : StateConverter<MergerState, MergerUiState> {
         MergerUiState.Content(
             selectedFiles = state.selectedFiles,
             isLoading = state.isLoading,
-            errorMessage = state.errorMessage,
-            successMessage = state.successMessage,
+            message = state.message,
             outputFileName = state.outputFileName,
             progress = state.progress,
-            currentOperation = state.currentOperation,
             isShowFileDialog = state.isShowFileDialog,
             dialogCurrentDirectory = state.dialogCurrentDirectory,
             dialogPathText = state.dialogPathText,

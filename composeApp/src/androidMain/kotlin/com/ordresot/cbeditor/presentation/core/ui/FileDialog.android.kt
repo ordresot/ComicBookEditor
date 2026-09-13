@@ -3,7 +3,7 @@ package com.ordresot.cbeditor.presentation.core.ui
 import androidx.compose.runtime.Composable
 
 @Composable
-actual fun CustomFileDialog(
+actual fun FileDialog(
     isShowDialog: Boolean,
     currentDirectory: String,
     selectedFiles: List<String>,

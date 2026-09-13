@@ -14,11 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ordresot.cbeditor.presentation.core.ui.CustomFileDialog
+import com.ordresot.cbeditor.presentation.core.ui.FileDialog
 import com.ordresot.cbeditor.presentation.core.ui.FileDropArea
+import com.ordresot.cbeditor.presentation.core.ui.MessageBanner
 import com.ordresot.cbeditor.presentation.core.ui.OutputFileNameField
-import com.ordresot.cbeditor.presentation.core.ui.ErrorMessage
-import com.ordresot.cbeditor.presentation.core.ui.SuccessMessage
 import com.ordresot.cbeditor.presentation.features.merger.MergerAction
 import com.ordresot.cbeditor.presentation.features.merger.MergerUiState
 
@@ -40,21 +39,14 @@ fun Content(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        SuccessMessage(
-            message = uiState.successMessage,
+        MessageBanner(
+            message = uiState.message,
             onDismiss = { onAction(MergerAction.OnDismissSuccess) },
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        ErrorMessage(
-            message = uiState.errorMessage,
-            onDismiss = { onAction(MergerAction.OnDismissError) },
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         MergeProgress(
             progress = uiState.progress,
-            currentOperation = uiState.currentOperation,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
@@ -108,7 +100,7 @@ fun Content(
         }
     }
 
-    CustomFileDialog(
+    FileDialog(
         isShowDialog = uiState.isShowFileDialog,
         currentDirectory = uiState.dialogCurrentDirectory,
         selectedFiles = uiState.selectedFiles,
