@@ -2,7 +2,7 @@ package com.ordresot.cbeditor.data.repository
 
 import com.ordresot.cbeditor.domain.repository.ArchiveRepository
 import com.ordresot.cbeditor.models.ArchiveEntry
-import com.ordresot.cbeditor.utils.MergeProgressTracker
+import com.ordresot.cbeditor.presentation.utils.MergeProgressTracker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedOutputStream
@@ -39,7 +39,7 @@ actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
     /**
      * Пытаемся открыть CBR файл как ZIP архив (простой способ)
      */
-    private fun tryExtractCbrAsZip(cbrPath: String, progressTracker: MergeProgressTracker?): List<ArchiveEntry>? {
+    private suspend fun tryExtractCbrAsZip(cbrPath: String, progressTracker: MergeProgressTracker?): List<ArchiveEntry>? {
         return try {
             println("🔧 Пробуем открыть CBR как ZIP: $cbrPath")
             extractZipFiles(cbrPath, progressTracker).also {
@@ -53,7 +53,7 @@ actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
         }
     }
 
-    private fun extractRarWithExternalTools(rarPath: String, progressTracker: MergeProgressTracker?): List<ArchiveEntry> {
+    private suspend fun extractRarWithExternalTools(rarPath: String, progressTracker: MergeProgressTracker?): List<ArchiveEntry> {
         val entries = mutableListOf<ArchiveEntry>()
 
         println("CBR не ZIP, пробуем внешние утилиты: $rarPath")
@@ -259,7 +259,7 @@ actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
             }
         }
 
-    private fun extractZipFiles(zipPath: String, progressTracker: MergeProgressTracker?): List<ArchiveEntry> {
+    private suspend fun extractZipFiles(zipPath: String, progressTracker: MergeProgressTracker?): List<ArchiveEntry> {
         val entries = mutableListOf<ArchiveEntry>()
         ZipFile(File(zipPath)).use { zip ->
             val allEntries = zip.entries().toList()
@@ -299,7 +299,7 @@ actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
         println("================================")
     }
 
-    private fun createZipArchive(entries: List<ArchiveEntry>, outputPath: String, progressTracker: MergeProgressTracker?): Boolean {
+    private suspend fun createZipArchive(entries: List<ArchiveEntry>, outputPath: String, progressTracker: MergeProgressTracker?): Boolean {
         return try {
             FileOutputStream(outputPath).use { fileOutput ->
                 ZipOutputStream(BufferedOutputStream(fileOutput)).use { zipOutput ->

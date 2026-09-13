@@ -4,7 +4,7 @@ import com.ordresot.cbeditor.domain.repository.ArchiveRepository
 import com.ordresot.cbeditor.domain.repository.FileRepository
 import com.ordresot.cbeditor.domain.repository.PreferencesRepository
 import com.ordresot.cbeditor.models.ArchiveEntry
-import com.ordresot.cbeditor.utils.MergeProgressTracker
+import com.ordresot.cbeditor.presentation.utils.MergeProgressTracker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent

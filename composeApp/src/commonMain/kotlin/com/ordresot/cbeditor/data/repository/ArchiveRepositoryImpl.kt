@@ -2,7 +2,7 @@ package com.ordresot.cbeditor.data.repository
 
 import com.ordresot.cbeditor.domain.repository.ArchiveRepository
 import com.ordresot.cbeditor.models.ArchiveEntry
-import com.ordresot.cbeditor.utils.MergeProgressTracker
+import com.ordresot.cbeditor.presentation.utils.MergeProgressTracker
 
 expect class ArchiveRepositoryImpl() : ArchiveRepository {
     override suspend fun extractFiles(

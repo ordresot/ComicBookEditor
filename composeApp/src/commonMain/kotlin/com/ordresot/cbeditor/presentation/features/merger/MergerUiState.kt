@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.merger
+package com.ordresot.cbeditor.presentation.features.merger
 
 sealed interface MergerUiState {
     data class Content(
@@ -10,5 +10,7 @@ sealed interface MergerUiState {
         val progress: Float,
         val currentOperation: String,
         val isShowFileDialog: Boolean,
+        val dialogCurrentDirectory: String,
+        val dialogPathText: String,
     ) : MergerUiState
 }

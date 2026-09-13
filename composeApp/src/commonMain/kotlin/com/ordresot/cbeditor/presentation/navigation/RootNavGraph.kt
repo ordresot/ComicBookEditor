@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.core.navigation
+package com.ordresot.cbeditor.presentation.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,11 +13,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ordresot.cbeditor.Platform
-import com.ordresot.cbeditor.converter.ConvertFileScreen
-import com.ordresot.cbeditor.editor.EditFileScreen
-import com.ordresot.cbeditor.presentation.MainScreen
-import com.ordresot.cbeditor.presentation.merger.MergeFilesScreen
-import com.ordresot.cbeditor.presentation.merger.MergerViewModel
+import com.ordresot.cbeditor.presentation.features.converter.ConvertFileScreen
+import com.ordresot.cbeditor.presentation.features.editor.EditFileScreen
+import com.ordresot.cbeditor.presentation.features.main.MainScreen
+import com.ordresot.cbeditor.presentation.features.merger.MergeFilesScreen
+import com.ordresot.cbeditor.presentation.features.merger.MergerViewModel
 import com.ordresot.cbeditor.presentation.core.ui.NavigationBar
 import org.koin.compose.koinInject
 

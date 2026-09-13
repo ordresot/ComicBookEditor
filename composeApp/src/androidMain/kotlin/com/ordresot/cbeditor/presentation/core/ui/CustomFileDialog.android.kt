@@ -1,12 +1,20 @@
 package com.ordresot.cbeditor.presentation.core.ui
 
 import androidx.compose.runtime.Composable
-import java.io.File
 
 @Composable
 actual fun CustomFileDialog(
-    onFilesSelected: (List<File>) -> Unit,
-    onDismiss: () -> Unit
+    isShowDialog: Boolean,
+    currentDirectory: String,
+    selectedFiles: List<String>,
+    pathText: String,
+    onNavigateUp: () -> Unit,
+    onNavigateToDirectory: (String) -> Unit,
+    onNavigateToCustomPath: (String) -> Unit,
+    onToggleFileSelection: (String) -> Unit,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    onUpdatePathText: (String) -> Unit
 ) {
-    TODO("Not yet implemented for Android")
+    // TODO: Implement for Android
 }

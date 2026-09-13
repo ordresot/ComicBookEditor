@@ -1,7 +1,7 @@
 package com.ordresot.cbeditor.data.repository
 
 import com.ordresot.cbeditor.domain.repository.FileRepository
-import com.ordresot.cbeditor.utils.MergeProgressTracker
+import com.ordresot.cbeditor.presentation.utils.MergeProgressTracker
 
 expect class FileRepositoryImpl() : FileRepository {
     override suspend fun readFile(path: String): ByteArray?

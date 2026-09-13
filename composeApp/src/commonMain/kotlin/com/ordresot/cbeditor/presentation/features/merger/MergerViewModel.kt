@@ -1,11 +1,12 @@
-package com.ordresot.cbeditor.presentation.merger
+package com.ordresot.cbeditor.presentation.features.merger
 
 import androidx.lifecycle.viewModelScope
-import com.ordresot.cbeditor.presentation.core.navigation.NavigationEffect
+import com.ordresot.cbeditor.presentation.navigation.NavigationEffect
 import com.ordresot.cbeditor.presentation.core.base.BaseViewModel
 import com.ordresot.cbeditor.domain.repository.FileRepository
-import com.ordresot.cbeditor.presentation.merger.MergerConverter
-import com.ordresot.cbeditor.utils.MergeProgressTracker
+import com.ordresot.cbeditor.domain.repository.PreferencesRepository
+import com.ordresot.cbeditor.presentation.utils.MergeProgressTracker
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -16,6 +17,7 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
     initState = MergerState()
 ), KoinComponent {
     private val fileRepository: FileRepository by inject()
+    private val preferencesRepository: PreferencesRepository by inject()
 
     override fun onAction(action: MergerAction) {
         when (action) {
@@ -39,10 +41,41 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
                 updateState { stateDismissSuccess() }
             }
             is MergerAction.OnShowFileDialog -> {
-                updateState { stateShowFileDialog() }
+                val lastDir = preferencesRepository.getLastDirectory()
+                val startDir = lastDir?.absolutePath ?: File(System.getProperty("user.home")).absolutePath
+                updateState { stateShowFileDialog().stateNavigateToDirectory(startDir) }
             }
             is MergerAction.OnDismissFileDialog -> {
                 updateState { stateDismissFileDialog() }
+            }
+            is MergerAction.OnNavigateUp -> {
+                updateState { stateNavigateUp() }
+            }
+            is MergerAction.OnNavigateToDirectory -> {
+                updateState { stateNavigateToDirectory(action.path) }
+                preferencesRepository.saveLastDirectory(File(action.path))
+            }
+            is MergerAction.OnNavigateToCustomPath -> {
+                val dir = File(action.path)
+                if (dir.exists() && dir.isDirectory) {
+                    updateState { stateNavigateToCustomPath(action.path) }
+                    preferencesRepository.saveLastDirectory(dir)
+                }
+            }
+            is MergerAction.OnToggleFileSelection -> {
+                updateState { stateToggleFileSelection(action.path) }
+            }
+            is MergerAction.OnConfirmFileDialog -> {
+                if (state.selectedFiles.isNotEmpty()) {
+                    val dir = File(state.dialogCurrentDirectory)
+                    preferencesRepository.saveLastDirectory(dir)
+                    updateState {
+                        stateConfirmFileDialog()
+                    }
+                }
+            }
+            is MergerAction.OnUpdateDialogPathText -> {
+                updateState { stateUpdateDialogPathText(action.path) }
             }
             is MergerAction.OnProgressUpdate -> {
                 updateState { stateProgressUpdate(action.progress, action.operation) }
@@ -57,8 +90,17 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
         viewModelScope.launch {
             updateState { stateMergingStarted() }
 
+            val progressTracker = MergeProgressTracker()
+
+            val progressJob = viewModelScope.launch {
+                progressTracker.progressFlow
+                    .catch { updateState { stateMergeError("Ошибка отслеживания прогресса") } }
+                    .collect { update ->
+                        updateState { stateProgressUpdate(update.progress, update.operation) }
+                    }
+            }
+
             try {
-                val progressTracker = MergeProgressTracker()
                 val outputPath = generateOutputPath(state.selectedFiles, state.outputFileName)
 
                 val success = fileRepository.mergeFiles(
@@ -67,12 +109,15 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
                     progressTracker = progressTracker
                 )
 
+                progressJob.cancel()
+
                 if (success) {
                     updateState { stateMergeSuccess(outputPath) }
                 } else {
                     updateState { stateMergeError("Ошибка при объединении файлов") }
                 }
             } catch (e: Exception) {
+                progressJob.cancel()
                 updateState { stateMergeError("Ошибка: ${e.message}") }
             }
         }

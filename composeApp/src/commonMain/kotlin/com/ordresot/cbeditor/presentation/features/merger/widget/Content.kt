@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.merger.widget
+package com.ordresot.cbeditor.presentation.features.merger.widget
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,8 +19,8 @@ import com.ordresot.cbeditor.presentation.core.ui.FileDropArea
 import com.ordresot.cbeditor.presentation.core.ui.OutputFileNameField
 import com.ordresot.cbeditor.presentation.core.ui.ErrorMessage
 import com.ordresot.cbeditor.presentation.core.ui.SuccessMessage
-import com.ordresot.cbeditor.presentation.merger.MergerAction
-import com.ordresot.cbeditor.presentation.merger.MergerUiState
+import com.ordresot.cbeditor.presentation.features.merger.MergerAction
+import com.ordresot.cbeditor.presentation.features.merger.MergerUiState
 
 @Composable
 fun Content(
@@ -52,17 +52,14 @@ fun Content(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        if (uiState.currentOperation.isNotEmpty()) {
-            MergeProgress(
-                progress = uiState.progress,
-                currentOperation = uiState.currentOperation,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            )
-        }
+        MergeProgress(
+            progress = uiState.progress,
+            currentOperation = uiState.currentOperation,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        )
 
-        // Область для Drag'n'Drop
         FileDropArea(
             selectedFiles = uiState.selectedFiles,
             onFilesSelected = { files ->
@@ -77,7 +74,6 @@ fun Content(
 
         Spacer(Modifier.height(24.dp))
 
-        // Поле для имени выходного файла
         if (uiState.selectedFiles.isNotEmpty()) {
             OutputFileNameField(
                 fileName = uiState.outputFileName,
@@ -88,11 +84,8 @@ fun Content(
                     .fillMaxWidth()
                     .padding(bottom = 24.dp)
             )
-
-            Spacer(Modifier.height(24.dp))
         }
-
-        // Кнопка объединения
+        
         Button(
             onClick = { onAction(MergerAction.OnMergeFiles) },
             enabled = uiState.selectedFiles.size >= 2 && !uiState.isLoading,
@@ -115,13 +108,17 @@ fun Content(
         }
     }
 
-    if (uiState.isShowFileDialog) {
-        CustomFileDialog(
-            onFilesSelected = { files ->
-                onAction(MergerAction.OnFilesSelected(files.map { it.absolutePath }))
-                onAction(MergerAction.OnDismissFileDialog)
-            },
-            onDismiss = { onAction(MergerAction.OnDismissFileDialog) }
-        )
-    }
+    CustomFileDialog(
+        isShowDialog = uiState.isShowFileDialog,
+        currentDirectory = uiState.dialogCurrentDirectory,
+        selectedFiles = uiState.selectedFiles,
+        pathText = uiState.dialogPathText,
+        onNavigateUp = { onAction(MergerAction.OnNavigateUp) },
+        onNavigateToDirectory = { onAction(MergerAction.OnNavigateToDirectory(it)) },
+        onNavigateToCustomPath = { onAction(MergerAction.OnNavigateToCustomPath(it)) },
+        onToggleFileSelection = { onAction(MergerAction.OnToggleFileSelection(it)) },
+        onConfirm = { onAction(MergerAction.OnConfirmFileDialog) },
+        onDismiss = { onAction(MergerAction.OnDismissFileDialog) },
+        onUpdatePathText = { onAction(MergerAction.OnUpdateDialogPathText(it)) }
+    )
 }

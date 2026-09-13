@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.merger
+package com.ordresot.cbeditor.presentation.features.merger
 
 import com.ordresot.cbeditor.presentation.core.base.StateConverter
 
@@ -13,6 +13,8 @@ class MergerConverter : StateConverter<MergerState, MergerUiState> {
             progress = state.progress,
             currentOperation = state.currentOperation,
             isShowFileDialog = state.isShowFileDialog,
+            dialogCurrentDirectory = state.dialogCurrentDirectory,
+            dialogPathText = state.dialogPathText,
         )
     }
 }

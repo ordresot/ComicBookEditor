@@ -1,4 +1,6 @@
-package com.ordresot.cbeditor.presentation.merger
+package com.ordresot.cbeditor.presentation.features.merger
+
+import java.io.File
 
 data class MergerState(
     val selectedFiles: List<String> = emptyList(),
@@ -8,7 +10,9 @@ data class MergerState(
     val outputFileName: String = "",
     val progress: Float = 0f,
     val currentOperation: String = "",
-    val isShowFileDialog: Boolean = false
+    val isShowFileDialog: Boolean = false,
+    val dialogCurrentDirectory: String = "",
+    val dialogPathText: String = ""
 ) {
 
     fun stateSelectedFiles(files: List<String>): MergerState = copy(selectedFiles = files)
@@ -28,9 +32,11 @@ data class MergerState(
     fun stateMergeSuccess(outputPath: String): MergerState =
         copy(
             isLoading = false,
-            successMessage = "Файлы успешно объединены в: ${java.io.File(outputPath).name}",
+            successMessage = "Файлы успешно объединены в: ${File(outputPath).name}",
             selectedFiles = emptyList(),
-            outputFileName = ""
+            outputFileName = "",
+            progress = 0f,
+            currentOperation = ""
         )
 
     fun stateMergeError(message: String): MergerState =
@@ -39,4 +45,29 @@ data class MergerState(
     fun stateShowFileDialog(): MergerState = copy(isShowFileDialog = true)
 
     fun stateDismissFileDialog(): MergerState = copy(isShowFileDialog = false)
+
+    fun stateNavigateToDirectory(path: String): MergerState =
+        copy(dialogCurrentDirectory = path, dialogPathText = path)
+
+    fun stateNavigateUp(): MergerState = copy(
+        dialogCurrentDirectory = File(dialogCurrentDirectory).parent ?: "",
+        dialogPathText = File(dialogCurrentDirectory).parent ?: ""
+    )
+
+    fun stateNavigateToCustomPath(path: String): MergerState =
+        copy(dialogCurrentDirectory = path, dialogPathText = path)
+
+    fun stateToggleFileSelection(path: String): MergerState = copy(
+        selectedFiles = if (selectedFiles.contains(path)) {
+            selectedFiles - path
+        } else {
+            selectedFiles + path
+        }
+    )
+
+    fun stateConfirmFileDialog(): MergerState = copy(
+        isShowFileDialog = false
+    )
+
+    fun stateUpdateDialogPathText(path: String): MergerState = copy(dialogPathText = path)
 }

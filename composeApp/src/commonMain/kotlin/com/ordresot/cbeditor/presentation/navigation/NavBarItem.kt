@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.core.navigation
+package com.ordresot.cbeditor.presentation.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit

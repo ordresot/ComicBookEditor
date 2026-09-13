@@ -2,12 +2,10 @@ package com.ordresot.cbeditor.data.repository
 
 import com.ordresot.cbeditor.domain.repository.ArchiveRepository
 import com.ordresot.cbeditor.models.ArchiveEntry
-import com.ordresot.cbeditor.utils.MergeProgressTracker
+import com.ordresot.cbeditor.presentation.utils.MergeProgressTracker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.BufferedInputStream
 import java.io.File
-import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
 actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
@@ -56,7 +54,7 @@ actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
         }
     }
 
-    private fun extractZipFiles(zipPath: String, progressTracker: MergeProgressTracker?): List<ArchiveEntry> {
+    private suspend fun extractZipFiles(zipPath: String, progressTracker: MergeProgressTracker?): List<ArchiveEntry> {
         val entries = mutableListOf<ArchiveEntry>()
         try {
             ZipFile(File(zipPath)).use { zip ->
