@@ -9,10 +9,14 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.pathString
 
 actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
     actual override suspend fun extractFiles(archivePath: String, progressTracker: MergeProgressTracker?): List<ArchiveEntry> =
@@ -65,8 +69,8 @@ actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
                 return emptyList()
             }
 
-            val tempDir = createTempDir("cbr_extract_${System.currentTimeMillis()}")
-            println("Временная директория: ${tempDir.absolutePath}")
+            val tempDir: Path = createTempDirectory("cbr_extract_")
+            println("Временная директория: ${tempDir.pathString}")
 
             val extractionTools = mutableListOf<List<String>>()
 
@@ -92,25 +96,25 @@ actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
             // Добавляем только существующие пути
             possible7zPaths.forEach { path ->
                 if (File(path).exists() || path.contains(File.separator).not()) {
-                    extractionTools.add(listOf(path, "x", "-y", rarFile.absolutePath, "-o${tempDir.absolutePath}"))
+                    extractionTools.add(listOf(path, "x", "-y", rarFile.absolutePath, "-o${tempDir.pathString}"))
                 }
             }
 
             possibleWinRarPaths.forEach { path ->
                 if (File(path).exists() || path.contains(File.separator).not()) {
-                    extractionTools.add(listOf(path, "x", "-y", rarFile.absolutePath, tempDir.absolutePath + File.separator))
+                    extractionTools.add(listOf(path, "x", "-y", rarFile.absolutePath, tempDir.pathString + File.separator))
                 }
             }
 
             possibleUnrarPaths.forEach { path ->
                 if (File(path).exists() || path.contains(File.separator).not()) {
-                    extractionTools.add(listOf(path, "x", "-y", rarFile.absolutePath, tempDir.absolutePath))
+                    extractionTools.add(listOf(path, "x", "-y", rarFile.absolutePath, tempDir.pathString))
                 }
             }
 
             extractionTools.addAll(listOf(
-                listOf("rar", "x", "-y", rarFile.absolutePath, tempDir.absolutePath),
-                listOf("bsdtar", "-xf", rarFile.absolutePath, "-C", tempDir.absolutePath)
+                listOf("rar", "x", "-y", rarFile.absolutePath, tempDir.pathString),
+                listOf("bsdtar", "-xf", rarFile.absolutePath, "-C", tempDir.pathString)
             ))
 
             println("Доступные утилиты для проверки: ${extractionTools.size}")
@@ -169,29 +173,29 @@ actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
             if (!extractionSuccess) {
                 println("Ни одна утилита не смогла извлечь RAR архив")
                 showInstallationInstructions()
-                tempDir.deleteRecursively()
+                tempDir.toFile().deleteRecursively()
                 return emptyList()
             }
 
             println("Архив успешно извлечен с помощью: $usedTool")
 
             // Проверяем что в временной директории есть файлы
-            val allFiles = tempDir.listFiles()
+            val allFiles = tempDir.toFile().listFiles()
             if (allFiles == null || allFiles.isEmpty()) {
                 println("⚠️ Временная директория пуста после извлечения")
-                tempDir.deleteRecursively()
+                tempDir.toFile().deleteRecursively()
                 return emptyList()
             }
 
             println("Содержимое временной директории:")
-            tempDir.walk().forEach { file ->
+            tempDir.toFile().walk().forEach { file ->
                 if (file.isFile) {
                     println("   - ${file.name} (${file.length()} bytes)")
                 }
             }
 
             // Получаем ВСЕ файлы из временной директории
-            val allFilesInTemp = tempDir.walk()
+            val allFilesInTemp = tempDir.toFile().walk()
                 .filter { it.isFile }
                 .sortedBy { it.name }
                 .toList()
@@ -233,7 +237,7 @@ actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
 
             // Очистка
             try {
-                tempDir.deleteRecursively()
+                tempDir.toFile().deleteRecursively()
                 println("Временная директория очищена")
             } catch (e: Exception) {
                 println("Не удалось очистить временную директорию: ${e.message}")
@@ -261,20 +265,22 @@ actual class ArchiveRepositoryImpl actual constructor() : ArchiveRepository {
 
     private suspend fun extractZipFiles(zipPath: String, progressTracker: MergeProgressTracker?): List<ArchiveEntry> {
         val entries = mutableListOf<ArchiveEntry>()
-        ZipFile(File(zipPath)).use { zip ->
-            val allEntries = zip.entries().toList()
-                .filter { !it.isDirectory && isImageFile(it.name) }
-                .sortedBy { it.name }
+        withContext(Dispatchers.IO) {
+            ZipFile(File(zipPath)).use { zip ->
+                val allEntries = zip.entries().toList()
+                    .filter { !it.isDirectory && isImageFile(it.name) }
+                    .sortedBy { it.name }
 
-            allEntries.forEachIndexed { index, entry ->
-                progressTracker?.updateProgress(
-                    progress = index.toFloat() / allEntries.size.toFloat(),
-                    operation = "Извлечение: ${File(zipPath).name} (${index + 1}/${allEntries.size})"
-                )
+                allEntries.forEachIndexed { index, entry ->
+                    progressTracker?.updateProgress(
+                        progress = index.toFloat() / allEntries.size.toFloat(),
+                        operation = "Извлечение: ${File(zipPath).name} (${index + 1}/${allEntries.size})"
+                    )
 
-                zip.getInputStream(entry).use { input ->
-                    val data = input.readAllBytes()
-                    entries.add(ArchiveEntry(entry.name, data, zipPath))
+                    zip.getInputStream(entry).use { input ->
+                        val data = input.readAllBytes()
+                        entries.add(ArchiveEntry(entry.name, data, zipPath))
+                    }
                 }
             }
         }
