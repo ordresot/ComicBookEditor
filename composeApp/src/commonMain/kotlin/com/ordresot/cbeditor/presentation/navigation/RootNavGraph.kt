@@ -53,7 +53,7 @@ fun RootNavGraph(
                     val viewModel: MergerViewModel = koinInject()
                     MergeFilesScreen(
                         viewModel = viewModel,
-                        onNavigation = { /* No effects for now */ }
+                        onNavigation = { }
                     )
                 }
                 NavigationEffect.NavigateToConverterScreen -> ConvertFileScreen()
