@@ -12,6 +12,7 @@ actual fun FileDialog(
     onNavigateToDirectory: (String) -> Unit,
     onNavigateToCustomPath: (String) -> Unit,
     onToggleFileSelection: (String) -> Unit,
+    onSelectAll: () -> Unit,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     onUpdatePathText: (String) -> Unit

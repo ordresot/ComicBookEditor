@@ -109,6 +109,7 @@ fun Content(
         onNavigateToDirectory = { onAction(MergerAction.OnNavigateToDirectory(it)) },
         onNavigateToCustomPath = { onAction(MergerAction.OnNavigateToCustomPath(it)) },
         onToggleFileSelection = { onAction(MergerAction.OnToggleFileSelection(it)) },
+        onSelectAll = { onAction(MergerAction.OnSelectAll) },
         onConfirm = { onAction(MergerAction.OnConfirmFileDialog) },
         onDismiss = { onAction(MergerAction.OnDismissFileDialog) },
         onUpdatePathText = { onAction(MergerAction.OnUpdateDialogPathText(it)) }

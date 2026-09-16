@@ -33,6 +33,7 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
             is MergerAction.OnNavigateToDirectory -> onNavigateToDirectory(action.path)
             is MergerAction.OnNavigateToCustomPath -> onNavigateToCustomPath(action.path)
             is MergerAction.OnToggleFileSelection -> onToggleFileSelection(action.path)
+            is MergerAction.OnSelectAll -> onSelectAll()
             is MergerAction.OnConfirmFileDialog -> onConfirmFileDialog()
             is MergerAction.OnUpdateDialogPathText -> onUpdateDialogPathText(action.path)
             is MergerAction.OnProgressUpdate -> onProgressUpdate(action.progress, action.operation)
@@ -98,6 +99,15 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
         updateState { stateToggleFileSelection(path) }
     }
 
+    private fun onSelectAll() {
+        val currentDir = File(state.dialogCurrentDirectory)
+        val comicFiles = currentDir.listFiles()?.filter { isComicFile(it) }?.map { it.absolutePath }
+            ?: emptyList()
+        if (comicFiles.isNotEmpty()) {
+            updateState { stateSelectedFiles(comicFiles) }
+        }
+    }
+
     private fun onConfirmFileDialog() {
         if (state.selectedFiles.isNotEmpty()) {
             val dir = File(state.dialogCurrentDirectory)
@@ -153,6 +163,12 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
                 progressJob.cancel()
                 updateState { stateMergeError("Ошибка: ${e.message}") }
             }
+        }
+    }
+
+    private fun isComicFile(file: File): Boolean {
+        return file.name.lowercase().let {
+            it.endsWith(".cbr") || it.endsWith(".cbz")
         }
     }
 }
