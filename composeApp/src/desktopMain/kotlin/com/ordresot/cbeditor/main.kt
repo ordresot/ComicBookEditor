@@ -1,8 +1,8 @@
 package com.ordresot.cbeditor
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.window.Window
+import com.ordresot.cbeditor.presentation.ComicEditorApp
+import com.ordresot.cbeditor.presentation.theme.ComicEditorTheme
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
@@ -18,9 +18,7 @@ fun main() = application {
             placement = WindowPlacement.Maximized
         }
     ) {
-        MaterialTheme(
-            colorScheme = lightColorScheme()
-        ) {
+        ComicEditorTheme {
             ComicEditorApp(Platform.Desktop)
         }
     }
