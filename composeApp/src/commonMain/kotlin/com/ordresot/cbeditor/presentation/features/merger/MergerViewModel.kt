@@ -34,7 +34,7 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
             is MergerAction.OnNavigateToCustomPath -> onNavigateToCustomPath(action.path)
             is MergerAction.OnToggleFileSelection -> onToggleFileSelection(action.path)
             is MergerAction.OnSelectAll -> onSelectAll()
-            is MergerAction.OnConfirmFileDialog -> onConfirmFileDialog()
+            is MergerAction.OnClearSelection -> onClearSelection()
             is MergerAction.OnUpdateDialogPathText -> onUpdateDialogPathText(action.path)
             is MergerAction.OnProgressUpdate -> onProgressUpdate(action.progress, action.operation)
         }
@@ -108,14 +108,8 @@ class MergerViewModel : BaseViewModel<MergerState, MergerUiState, MergerAction, 
         }
     }
 
-    private fun onConfirmFileDialog() {
-        if (state.selectedFiles.isNotEmpty()) {
-            val dir = File(state.dialogCurrentDirectory)
-            viewModelScope.launch {
-                preferencesRepository.saveLastDirectory(dir)
-            }
-            updateState { stateConfirmFileDialog() }
-        }
+    private fun onClearSelection() {
+        updateState { stateClearSelection() }
     }
 
     private fun onUpdateDialogPathText(path: String) {

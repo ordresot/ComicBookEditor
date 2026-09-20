@@ -52,8 +52,8 @@ actual fun FileDialog(
     onNavigateToCustomPath: (String) -> Unit,
     onToggleFileSelection: (String) -> Unit,
     onSelectAll: () -> Unit,
-    onConfirm: () -> Unit,
     onDismiss: () -> Unit,
+    onClearSelection: () -> Unit,
     onUpdatePathText: (String) -> Unit
 ) {
     if (!isShowDialog) return
@@ -215,10 +215,10 @@ actual fun FileDialog(
                     Spacer(Modifier.width(20.dp))
 
                     TextButton(
-                        onClick = onDismiss,
+                        onClick = onClearSelection,
                         modifier = Modifier.height(48.dp)
                     ) {
-                        Text("Отмена", style = MaterialTheme.typography.bodyLarge)
+                        Text("Очистить", style = MaterialTheme.typography.bodyLarge)
                     }
 
                     Spacer(Modifier.width(12.dp))
@@ -228,16 +228,6 @@ actual fun FileDialog(
                         modifier = Modifier.height(48.dp)
                     ) {
                         Text("Выбрать все", style = MaterialTheme.typography.bodyLarge)
-                    }
-
-                    Spacer(Modifier.width(12.dp))
-
-                    Button(
-                        onClick = onConfirm,
-                        enabled = selectedFiles.isNotEmpty(),
-                        modifier = Modifier.height(48.dp)
-                    ) {
-                        Text("Подтвердить", style = MaterialTheme.typography.bodyLarge)
                     }
                 }
             }

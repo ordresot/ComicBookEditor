@@ -11,7 +11,7 @@ sealed interface MergerAction {
     data class OnNavigateToCustomPath(val path: String) : MergerAction
     data class OnToggleFileSelection(val path: String) : MergerAction
     data object OnSelectAll : MergerAction
-    data object OnConfirmFileDialog : MergerAction
+    data object OnClearSelection : MergerAction
     data class OnUpdateDialogPathText(val path: String) : MergerAction
     data class OnFilesSelected(val files: List<String>) : MergerAction
     data class OnOutputFileNameChanged(val fileName: String) : MergerAction

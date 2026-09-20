@@ -64,9 +64,7 @@ data class MergerState(
         }
     )
 
-    fun stateConfirmFileDialog(): MergerState = copy(
-        isShowFileDialog = false
-    )
+    fun stateClearSelection(): MergerState = copy(selectedFiles = emptyList())
 
     fun stateUpdateDialogPathText(path: String): MergerState = copy(dialogPathText = path)
 }

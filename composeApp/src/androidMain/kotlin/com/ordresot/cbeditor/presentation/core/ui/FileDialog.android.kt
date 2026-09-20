@@ -13,8 +13,8 @@ actual fun FileDialog(
     onNavigateToCustomPath: (String) -> Unit,
     onToggleFileSelection: (String) -> Unit,
     onSelectAll: () -> Unit,
-    onConfirm: () -> Unit,
     onDismiss: () -> Unit,
+    onClearSelection: () -> Unit,
     onUpdatePathText: (String) -> Unit
 ) {
     // TODO: Implement for Android
