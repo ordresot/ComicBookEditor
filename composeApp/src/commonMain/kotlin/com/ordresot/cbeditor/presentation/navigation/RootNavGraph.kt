@@ -51,12 +51,7 @@ fun RootNavGraph(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Navigator(screen = when (currentRoute) {
-                ScreenRoute.Main -> MainScreen()
-                ScreenRoute.Editor -> EditFileScreen()
-                ScreenRoute.Merger -> MergerScreen()
-                ScreenRoute.Converter -> ConvertFileScreen()
-            }) { navigator ->
+            Navigator(screen = MainScreen()) { navigator ->
                 LocalNavigatorProvider(navigator) {
                     when (currentRoute) {
                         ScreenRoute.Main -> MainScreen().Content()
