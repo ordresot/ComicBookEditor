@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.feature.merger
+package com.ordresot.cbeditor.presentation.feature.merger.widget
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,15 +18,11 @@ import com.ordresot.cbeditor.presentation.core.ui.FileDialog
 import com.ordresot.cbeditor.presentation.core.ui.FileDropArea
 import com.ordresot.cbeditor.presentation.core.ui.MessageBanner
 import com.ordresot.cbeditor.presentation.core.ui.OutputFileNameField
-import com.ordresot.cbeditor.presentation.feature.merger.widget.MergeProgress
+import com.ordresot.cbeditor.presentation.feature.merger.MergerIntent
+import com.ordresot.cbeditor.presentation.feature.merger.MergerState
 
-/**
- * Pure Compose UI для экрана объединения файлов.
- * Не знает о ViewModel, Voyager или навигации.
- * Получает State и onIntent callback через параметры.
- */
 @Composable
-fun MergerContent(
+fun Content(
     state: MergerState,
     onIntent: (MergerIntent) -> Unit
 ) {

@@ -2,6 +2,7 @@ package com.ordresot.cbeditor.presentation.feature.merger
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
+import com.ordresot.cbeditor.presentation.feature.merger.widget.Content
 import com.ordresot.cbeditor.presentation.core.base.BaseRoute
 import org.koin.compose.koinInject
 
@@ -19,7 +20,7 @@ class MergerScreen : Screen {
             viewModel = viewModel,
             onEffect = { }
         ) { state, onIntent ->
-            MergerContent(
+            Content(
                 state = state,
                 onIntent = onIntent
             )
