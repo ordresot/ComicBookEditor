@@ -20,14 +20,3 @@ sealed interface ScreenRoute {
     @Serializable
     data object Converter : ScreenRoute
 }
-
-/**
- * Ключ таба для ScreenRoute.
- */
-val ScreenRoute.tabKey: String
-    get() = when (this) {
-        ScreenRoute.Main -> "main"
-        ScreenRoute.Editor -> "editor"
-        ScreenRoute.Merger -> "merger"
-        ScreenRoute.Converter -> "converter"
-    }
