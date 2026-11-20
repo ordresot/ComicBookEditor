@@ -20,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
-import com.ordresot.cbeditor.presentation.features.merger.uiState.MessageUi
+import com.ordresot.cbeditor.presentation.feature.merger.uiState.MessageUi
 
 @Composable
 fun MessageBanner(

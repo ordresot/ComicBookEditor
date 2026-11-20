@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.features.merger.widget
+package com.ordresot.cbeditor.presentation.feature.merger
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,13 +18,17 @@ import com.ordresot.cbeditor.presentation.core.ui.FileDialog
 import com.ordresot.cbeditor.presentation.core.ui.FileDropArea
 import com.ordresot.cbeditor.presentation.core.ui.MessageBanner
 import com.ordresot.cbeditor.presentation.core.ui.OutputFileNameField
-import com.ordresot.cbeditor.presentation.features.merger.MergerAction
-import com.ordresot.cbeditor.presentation.features.merger.MergerUiState
+import com.ordresot.cbeditor.presentation.feature.merger.widget.MergeProgress
 
+/**
+ * Pure Compose UI для экрана объединения файлов.
+ * Не знает о ViewModel, Voyager или навигации.
+ * Получает State и onIntent callback через параметры.
+ */
 @Composable
-fun Content(
-    uiState: MergerUiState.Content,
-    onAction: (MergerAction) -> Unit,
+fun MergerContent(
+    state: MergerState,
+    onIntent: (MergerIntent) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -40,25 +44,25 @@ fun Content(
         )
 
         MessageBanner(
-            message = uiState.message,
-            onDismiss = { onAction(MergerAction.OnDismissSuccess) },
+            message = state.message,
+            onDismiss = { onIntent(MergerIntent.OnDismissSuccess) },
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         MergeProgress(
-            progress = uiState.progress,
+            progress = state.progress,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         )
 
         FileDropArea(
-            selectedFiles = uiState.selectedFiles,
+            selectedFiles = state.selectedFiles,
             onFilesSelected = { files ->
-                onAction(MergerAction.OnFilesSelected(files))
+                onIntent(MergerIntent.OnFilesSelected(files))
             },
-            onPickFiles = { onAction(MergerAction.OnShowFileDialog) },
-            isLoading = uiState.isLoading,
+            onPickFiles = { onIntent(MergerIntent.OnShowFileDialog) },
+            isLoading = state.isLoading,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
@@ -66,26 +70,26 @@ fun Content(
 
         Spacer(Modifier.height(24.dp))
 
-        if (uiState.selectedFiles.isNotEmpty()) {
+        if (state.selectedFiles.isNotEmpty()) {
             OutputFileNameField(
-                fileName = uiState.outputFileName,
+                fileName = state.outputFileName,
                 onFileNameChange = { fileName ->
-                    onAction(MergerAction.OnOutputFileNameChanged(fileName))
+                    onIntent(MergerIntent.OnOutputFileNameChanged(fileName))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 24.dp)
             )
         }
-        
+
         Button(
-            onClick = { onAction(MergerAction.OnMergeFiles) },
-            enabled = uiState.selectedFiles.size >= 2 && !uiState.isLoading,
+            onClick = { onIntent(MergerIntent.OnMergeFiles) },
+            enabled = state.selectedFiles.size >= 2 && !state.isLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
         ) {
-            if (uiState.isLoading) {
+            if (state.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(20.dp),
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -93,7 +97,7 @@ fun Content(
                 )
             } else {
                 Text(
-                    text = "Объединить файлы (${uiState.selectedFiles.size})",
+                    text = "Объединить файлы (${state.selectedFiles.size})",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -101,17 +105,17 @@ fun Content(
     }
 
     FileDialog(
-        isShowDialog = uiState.isShowFileDialog,
-        currentDirectory = uiState.dialogCurrentDirectory,
-        selectedFiles = uiState.selectedFiles,
-        pathText = uiState.dialogPathText,
-        onNavigateUp = { onAction(MergerAction.OnNavigateUp) },
-        onNavigateToDirectory = { onAction(MergerAction.OnNavigateToDirectory(it)) },
-        onNavigateToCustomPath = { onAction(MergerAction.OnNavigateToCustomPath(it)) },
-        onToggleFileSelection = { onAction(MergerAction.OnToggleFileSelection(it)) },
-        onSelectAll = { onAction(MergerAction.OnSelectAll) },
-        onDismiss = { onAction(MergerAction.OnDismissFileDialog) },
-        onClearSelection = { onAction(MergerAction.OnClearSelection) },
-        onUpdatePathText = { onAction(MergerAction.OnUpdateDialogPathText(it)) }
+        isShowDialog = state.isShowFileDialog,
+        currentDirectory = state.dialogCurrentDirectory,
+        selectedFiles = state.selectedFiles,
+        pathText = state.dialogPathText,
+        onNavigateUp = { onIntent(MergerIntent.OnNavigateUp) },
+        onNavigateToDirectory = { onIntent(MergerIntent.OnNavigateToDirectory(it)) },
+        onNavigateToCustomPath = { onIntent(MergerIntent.OnNavigateToCustomPath(it)) },
+        onToggleFileSelection = { onIntent(MergerIntent.OnToggleFileSelection(it)) },
+        onSelectAll = { onIntent(MergerIntent.OnSelectAll) },
+        onDismiss = { onIntent(MergerIntent.OnDismissFileDialog) },
+        onClearSelection = { onIntent(MergerIntent.OnClearSelection) },
+        onUpdatePathText = { onIntent(MergerIntent.OnUpdateDialogPathText(it)) }
     )
 }

@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.ordresot.cbeditor.presentation.features.merger.widget.SelectedFilesList
+import com.ordresot.cbeditor.presentation.feature.merger.widget.SelectedFilesList
 
 @Composable
 fun FileDropArea(

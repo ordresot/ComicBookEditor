@@ -1,9 +1,14 @@
-package com.ordresot.cbeditor.presentation.features.merger
+package com.ordresot.cbeditor.presentation.feature.merger
 
-import com.ordresot.cbeditor.presentation.features.merger.uiState.MessageUi
-import com.ordresot.cbeditor.presentation.features.merger.uiState.ProgressUi
+import com.ordresot.cbeditor.presentation.core.base.MviState
+import com.ordresot.cbeditor.presentation.feature.merger.uiState.MessageUi
+import com.ordresot.cbeditor.presentation.feature.merger.uiState.ProgressUi
 import java.io.File
 
+/**
+ * MVI State для экрана объединения файлов.
+ * Единый объект текущего состояния экрана, который потребляется Compose UI.
+ */
 data class MergerState(
     val selectedFiles: List<String> = emptyList(),
     val isLoading: Boolean = false,
@@ -13,7 +18,7 @@ data class MergerState(
     val isShowFileDialog: Boolean = false,
     val dialogCurrentDirectory: String = "",
     val dialogPathText: String = ""
-) {
+) : MviState {
     fun stateSelectedFiles(files: List<String>): MergerState = copy(selectedFiles = files)
 
     fun stateOutputFileName(fileName: String): MergerState = copy(outputFileName = fileName)

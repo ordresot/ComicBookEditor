@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.features.converter
+package com.ordresot.cbeditor.presentation.feature.editor
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -8,9 +8,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.core.screen.Screen
 
+/**
+ * Voyager Screen для экрана редактирования файла (stub).
+ */
+class EditFileScreen : Screen {
+    @Composable
+    override fun Content() {
+        EditFileContent()
+    }
+}
+
+/**
+ * Pure Compose UI экрана редактирования.
+ */
 @Composable
-fun ConvertFileScreen() {
+fun EditFileContent() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -18,7 +32,7 @@ fun ConvertFileScreen() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            "Экран конвертации - в разработке",
+            "Экран редактирования файла - в разработке",
             style = MaterialTheme.typography.bodyLarge
         )
     }

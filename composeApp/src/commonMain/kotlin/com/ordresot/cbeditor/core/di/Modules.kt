@@ -6,7 +6,7 @@ import com.ordresot.cbeditor.data.repository.PreferencesRepositoryImpl
 import com.ordresot.cbeditor.domain.repository.ArchiveRepository
 import com.ordresot.cbeditor.domain.repository.FileRepository
 import com.ordresot.cbeditor.domain.repository.PreferencesRepository
-import com.ordresot.cbeditor.presentation.features.merger.MergerViewModel
+import com.ordresot.cbeditor.presentation.feature.merger.MergerViewModel
 import org.koin.dsl.module
 
 val repositoryModule = module {
@@ -16,7 +16,7 @@ val repositoryModule = module {
 }
 
 val viewModelModule = module {
-    factory { MergerViewModel() }
+    factory { MergerViewModel(get(), get()) }
 }
 
 val appModule = listOf(

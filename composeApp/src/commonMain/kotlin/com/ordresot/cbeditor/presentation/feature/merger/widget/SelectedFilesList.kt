@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.features.merger.widget
+package com.ordresot.cbeditor.presentation.feature.merger.widget
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

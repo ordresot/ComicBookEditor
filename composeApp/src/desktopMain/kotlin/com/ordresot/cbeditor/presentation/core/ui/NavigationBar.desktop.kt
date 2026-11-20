@@ -15,14 +15,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ordresot.cbeditor.presentation.navigation.NavigationEffect
+import com.ordresot.cbeditor.presentation.navigation.ScreenRoute
 
 @Composable
 actual fun NavigationBar(
-    currentScreen: NavigationEffect,
-    onScreenChange: (NavigationEffect) -> Unit
+    currentRoute: ScreenRoute,
+    onRouteChange: (ScreenRoute) -> Unit
 ) {
-    val isSelected: (NavigationEffect) -> Boolean = { it == currentScreen }
+    val isSelected: (ScreenRoute) -> Boolean = { it == currentRoute }
 
     Column(
         modifier = Modifier
@@ -30,7 +30,6 @@ actual fun NavigationBar(
             .padding(
                 vertical = 16.dp,
                 horizontal = 40.dp
-
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -38,32 +37,32 @@ actual fun NavigationBar(
             horizontalArrangement = Arrangement.spacedBy(40.dp)
         ) {
             LargeNavigationButton(
-                onClick = { onScreenChange(NavigationEffect.NavigateToMainScreen) },
-                isSelected = isSelected(NavigationEffect.NavigateToMainScreen),
+                onClick = { onRouteChange(ScreenRoute.Main) },
+                isSelected = isSelected(ScreenRoute.Main),
                 icon = Icons.Default.Home,
                 text = "Главная",
                 modifier = Modifier.weight(1f)
             )
 
             LargeNavigationButton(
-                onClick = { onScreenChange(NavigationEffect.NavigateToEditorScreen) },
-                isSelected = isSelected(NavigationEffect.NavigateToEditorScreen),
+                onClick = { onRouteChange(ScreenRoute.Editor) },
+                isSelected = isSelected(ScreenRoute.Editor),
                 icon = Icons.Default.Edit,
                 text = "Редактировать",
                 modifier = Modifier.weight(1f)
             )
 
             LargeNavigationButton(
-                onClick = { onScreenChange(NavigationEffect.NavigateToMergerScreen) },
-                isSelected = isSelected(NavigationEffect.NavigateToMergerScreen),
+                onClick = { onRouteChange(ScreenRoute.Merger) },
+                isSelected = isSelected(ScreenRoute.Merger),
                 icon = Icons.Default.Merge,
                 text = "Объединить",
                 modifier = Modifier.weight(1f)
             )
 
             LargeNavigationButton(
-                onClick = { onScreenChange(NavigationEffect.NavigateToConverterScreen) },
-                isSelected = isSelected(NavigationEffect.NavigateToConverterScreen),
+                onClick = { onRouteChange(ScreenRoute.Converter) },
+                isSelected = isSelected(ScreenRoute.Converter),
                 icon = Icons.Default.SwapHoriz,
                 text = "Конвертировать",
                 modifier = Modifier.weight(1f)

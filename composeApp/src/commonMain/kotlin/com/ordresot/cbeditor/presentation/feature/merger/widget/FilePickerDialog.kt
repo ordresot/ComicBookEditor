@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.features.merger.widget
+package com.ordresot.cbeditor.presentation.feature.merger.widget
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button

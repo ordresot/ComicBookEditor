@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.features.main
+package com.ordresot.cbeditor.presentation.feature.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,9 +10,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
+import com.ordresot.cbeditor.presentation.core.base.MviState
 
+/**
+ * Состояние главного экрана (stub).
+ */
+data class MainState(
+    val message: String = "Comic Book Editor"
+) : MviState
+
+/**
+ * Voyager Screen для главного экрана.
+ */
+class MainScreen : Screen {
+    @Composable
+    override fun Content() {
+        MainContent()
+    }
+}
+
+/**
+ * Pure Compose UI главного экрана.
+ */
 @Composable
-fun MainScreen() {
+fun MainContent() {
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.features.merger.widget
+package com.ordresot.cbeditor.presentation.feature.merger.widget
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ordresot.cbeditor.presentation.features.merger.uiState.ProgressUi
+import com.ordresot.cbeditor.presentation.feature.merger.uiState.ProgressUi
 
 @Composable
 fun MergeProgress(

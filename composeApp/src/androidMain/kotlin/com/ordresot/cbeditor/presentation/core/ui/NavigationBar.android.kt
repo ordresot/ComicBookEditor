@@ -14,15 +14,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.ordresot.cbeditor.presentation.navigation.NavigationEffect
+import com.ordresot.cbeditor.presentation.navigation.ScreenRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 actual fun NavigationBar(
-    currentScreen: NavigationEffect,
-    onScreenChange: (NavigationEffect) -> Unit
+    currentRoute: ScreenRoute,
+    onRouteChange: (ScreenRoute) -> Unit
 ) {
-    val isSelected: (NavigationEffect) -> Boolean = { it == currentScreen }
+    val isSelected: (ScreenRoute) -> Boolean = { it == currentRoute }
 
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.surface
@@ -33,29 +33,29 @@ actual fun NavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             CircularNavigationButton(
-                onClick = { onScreenChange(NavigationEffect.NavigateToMainScreen) },
-                isSelected = isSelected(NavigationEffect.NavigateToMainScreen),
+                onClick = { onRouteChange(ScreenRoute.Main) },
+                isSelected = isSelected(ScreenRoute.Main),
                 icon = Icons.Default.Home,
                 contentDescription = "Главная"
             )
 
             CircularNavigationButton(
-                onClick = { onScreenChange(NavigationEffect.NavigateToEditorScreen) },
-                isSelected = isSelected(NavigationEffect.NavigateToEditorScreen),
+                onClick = { onRouteChange(ScreenRoute.Editor) },
+                isSelected = isSelected(ScreenRoute.Editor),
                 icon = Icons.Default.Edit,
                 contentDescription = "Редактировать"
             )
 
             CircularNavigationButton(
-                onClick = { onScreenChange(NavigationEffect.NavigateToMergerScreen) },
-                isSelected = isSelected(NavigationEffect.NavigateToMergerScreen),
+                onClick = { onRouteChange(ScreenRoute.Merger) },
+                isSelected = isSelected(ScreenRoute.Merger),
                 icon = Icons.Default.Merge,
                 contentDescription = "Объединить"
             )
 
             CircularNavigationButton(
-                onClick = { onScreenChange(NavigationEffect.NavigateToConverterScreen) },
-                isSelected = isSelected(NavigationEffect.NavigateToConverterScreen),
+                onClick = { onRouteChange(ScreenRoute.Converter) },
+                isSelected = isSelected(ScreenRoute.Converter),
                 icon = Icons.Default.SwapHoriz,
                 contentDescription = "Конвертировать"
             )

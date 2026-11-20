@@ -1,4 +1,4 @@
-package com.ordresot.cbeditor.presentation.features.merger.uiState
+package com.ordresot.cbeditor.presentation.feature.merger.uiState
 
 data class MessageUi(
     val text: String,
